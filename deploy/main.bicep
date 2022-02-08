@@ -1,11 +1,12 @@
-param acrName string
 param acrSku string
-param appServicePlanName string
 param appServiceName string
+param location string = resourceGroup().location
 
 var appServiceSlotName = 'blue'
-
-param location string = resourceGroup().location
+var suffix = substring(uniqueString(resourceGroup().id), 0, 8)
+var acrName = 'acr${suffix}'
+var appServicePlanName = 'asp-${suffix}'
+var appName = 'app-${appServiceName}-${suffix}'
 
 module containerRegistry 'containerRegistry.bicep' = {
   name: 'containerRegistry'
@@ -13,7 +14,7 @@ module containerRegistry 'containerRegistry.bicep' = {
     registryLocation: location 
     registryName: acrName
     registrySku: acrSku
-    greenSlotName: appServiceName
+    greenSlotName: appName
     blueSlotName: appServiceSlotName
   }
 }
@@ -30,7 +31,7 @@ module appService 'appService.bicep' = {
   name: 'appService'
   params: {
     appServiceLocation: location 
-    appServiceName: appServiceName
+    appServiceName: appName
     serverFarmId: appServicePlan.outputs.appServicePlanId
     appServiceSlotName: appServiceSlotName
     acrName: acrName
