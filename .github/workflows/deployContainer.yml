@@ -55,7 +55,7 @@ jobs:
 
     - run: |
         a=$(az webapp list -g ${{ secrets.AZURE_RG }} --query '[].{Name:name}' -o tsv)
-        echo "::set-output appName=a::$a"
+        echo "::set-output name=a::$a"
         
     - name: 'Deploy to Blue Slot'
       uses: azure/webapps-deploy@v2
@@ -80,7 +80,7 @@ jobs:
         
     - run: |
         a=$(az webapp list -g ${{ secrets.AZURE_RG }} --query '[].{Name:name}' -o tsv)
-        echo "::set-output appName=a::$a"
+        echo "::set-output name=a::$a"
 
     - name: 'Swap to green slot'
       uses: Azure/cli@v1
