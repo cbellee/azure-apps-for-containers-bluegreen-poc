@@ -48,14 +48,19 @@ jobs:
       uses: actions/checkout@main
       
     - name: 'Login via Azure CLI'
+      id: login
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - run: |
+        a=$(az webapp list -g secrets.AZURE_RG --query '[].{Name:name}' -o tsv)
+        echo "::set-output appName=a::$a"
+        
     - name: 'Deploy to Blue Slot'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'velidacontainerwebapp'
+        app-name: ${{ steps.login.outputs.appName }} #'velidacontainerwebapp'
         images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/hellobluegreenwebapp:latest
         slot-name: 'blue'
 
@@ -69,11 +74,16 @@ jobs:
       
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
+      id: login
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - run: |
+        a=$(az webapp list -g secrets.AZURE_RG --query '[].{Name:name}' -o tsv)
+        echo "::set-output appName=a::$a"
 
     - name: 'Swap to green slot'
       uses: Azure/cli@v1
       with:
         inlineScript: |
-          az webapp deployment slot swap --slot 'blue' --resource-group ${{ secrets.AZURE_RG }} --name 'velidacontainerwebapp'
+          az webapp deployment slot swap --slot 'blue' --resource-group ${{ secrets.AZURE_RG }} --name ${{ steps.login.outputs.a }}
