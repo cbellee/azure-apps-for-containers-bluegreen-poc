@@ -54,6 +54,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - run: |
+        az webapp list -g ${{ secrets.AZURE_RG }} --query '[].{Name:name}' -o tsv
         a=$(az webapp list -g ${{ secrets.AZURE_RG }} --query '[].{Name:name}' -o tsv)
         echo "::set-output name=a::$a"
         echo $a
