@@ -62,7 +62,7 @@ jobs:
     - name: 'Deploy to Blue Slot'
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ steps.getwebappname.outputs.appName }} #'velidacontainerwebapp'
+        app-name: ${{ steps.getwebappname.outputs.appName }}
         images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/hellobluegreenwebapp:latest
         slot-name: 'blue'
 

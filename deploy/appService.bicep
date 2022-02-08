@@ -40,13 +40,25 @@ resource appService 'Microsoft.Web/sites@2021-02-01' = {
   kind: 'app,linux,container'
   properties: {
     serverFarmId: serverFarmId
-    siteConfig: {
+/*     siteConfig: {
       appSettings: appSettings
       linuxFxVersion: 'DOCKER|${acrName}.azurecr.io/${dockerImageAndTag}'
-    }
+      acrUseManagedIdentityCreds: true
+      acrUserManagedIdentityID: appService.id
+    } */
   }
   identity: {
     type: 'SystemAssigned'
+  }
+
+  resource siteConfig 'config@2021-02-01' = {
+    name: 'web'
+    properties: {
+      appSettings: appSettings
+      acrUseManagedIdentityCreds: true
+      acrUserManagedIdentityID: appService.id
+      linuxFxVersion: 'DOCKER|${acrName}.azurecr.io/${dockerImageAndTag}'
+    }
   }
 
   resource blueSlot 'slots' = {
