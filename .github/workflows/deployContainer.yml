@@ -54,7 +54,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - run: |
-        a=$(az webapp list -g secrets.AZURE_RG --query '[].{Name:name}' -o tsv)
+        a=$(az webapp list -g ${{ secrets.AZURE_RG }} --query '[].{Name:name}' -o tsv)
         echo "::set-output appName=a::$a"
         
     - name: 'Deploy to Blue Slot'
@@ -79,7 +79,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         
     - run: |
-        a=$(az webapp list -g secrets.AZURE_RG --query '[].{Name:name}' -o tsv)
+        a=$(az webapp list -g ${{ secrets.AZURE_RG }} --query '[].{Name:name}' -o tsv)
         echo "::set-output appName=a::$a"
 
     - name: 'Swap to green slot'
